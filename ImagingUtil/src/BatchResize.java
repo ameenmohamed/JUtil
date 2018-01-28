@@ -17,8 +17,8 @@ public class BatchResize {
 
 	public static void main(String[] args) throws IOException {
 		
-		String srcdir = "C:\\Amin\\am\\Images";
-		String destdir = "C:\\Amin\\am\\Images\\tt";
+		String srcdir = "/Users/mohamedameen/amroot/work";
+		String destdir = "/Users/mohamedameen/amroot/workout";
 		File src = new File(srcdir);
 		
 		if(src.isDirectory()){
@@ -28,20 +28,7 @@ public class BatchResize {
 				flt.mkdir();
 			}
 		long startTime = System.nanoTime();	
-			for (int i = 0; i < filelist.length; i++) {
-				String _currfl =srcdir+"/"+ filelist[i];
-				File workFl = new File(_currfl);
-				if(workFl.isFile()){
-					
-				String _destFile = destdir + "/" + filelist[i];
-				System.out.print("resizing :"+_currfl);
-				ImageResizer.createResizedCopy(_currfl, 1550, _destFile);
-				System.out.println(".... Done");
-				}
-				else{
-					System.out.println(_currfl +" is Dir");
-				}
-			}
+			FileReSize fs = new FileReSize(srcdir,destdir);
 			
 			long endTime = System.nanoTime();
 			long totTime = endTime - startTime;

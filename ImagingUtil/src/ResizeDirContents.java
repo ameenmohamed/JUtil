@@ -1,3 +1,4 @@
+import java.util.concurrent.TimeUnit;
 
 public class ResizeDirContents {
 
@@ -6,8 +7,13 @@ public class ResizeDirContents {
 	 */
 	public static void main(String[] args) {
 		
-		FileReSize fs = new FileReSize("E:/root/amdata/Rohingya/images/jpg","E:/root/amdata/Rohingya/imgtt");
-		
+		String srcdir = "/Users/mohamedameen/amroot/work";
+		String destdir = "/Users/mohamedameen/amroot/workout";
+		long startTime = System.nanoTime();	
+		FileReSize fs = new FileReSize(srcdir,destdir);
+		long endTime = System.nanoTime();
+		long totTime = endTime - startTime;
+		System.out.println("Time to resize "+TimeUnit.NANOSECONDS.toSeconds(totTime) +" seconds" );
 
 	}
 
