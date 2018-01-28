@@ -1,5 +1,7 @@
 import java.util.concurrent.TimeUnit;
 
+import akka.imgutil.hac.imgutil.FileReSize;
+
 public class ResizeDirContents {
 
 	/**

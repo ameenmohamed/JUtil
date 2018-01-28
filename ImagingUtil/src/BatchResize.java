@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 
 import com.thebuzzmedia.imgscalr.Scalr;
 
+import akka.imgutil.hac.imgutil.FileReSize;
+
 
 public class BatchResize {
 

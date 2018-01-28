@@ -1,20 +1,33 @@
-
+package akka.imgutil.hac.imgutil;
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.io.FilenameUtils;
+
+import akka.imgutil.hac.vo.FileSet;
 
 
 
 
 public class FileReSize extends BaseRecursion {
+	
+	
 
 	public FileReSize(String loc) {
 		super(loc);
+		
 	}
 	public FileReSize(String loc,String destLoc) {
 		super(loc,destLoc);
+		
 	}
 	
+	
+	
 
+	public FileSet getFset() {
+		return fset;
+	}
 	@Override
 	public void executeDirTask(File fl) {
 		String flName = destdir+File.separator+fl.getName();
@@ -28,6 +41,7 @@ public class FileReSize extends BaseRecursion {
 
 	@Override
 	public void executeFileTask(File fl) {
+		if(ImageResizer.isImage(fl)) {
 		String parent = fl.getParent();
 		String dirName = parent.substring(parent.lastIndexOf("\\")+1,parent.length());
 		String _destDir = destdir+File.separator+dirName;
@@ -37,17 +51,15 @@ public class FileReSize extends BaseRecursion {
 		
 		String _destFile = _destDir+File.separator+fl.getName();
 		String _currfl = fl.getAbsolutePath();
-	
-		//System.out.print("resizing :"+_currfl);
-		try {
-			//ImageResizer.createResizedCopy(_currfl, 1550, _destFile);
+			fset.addFilePath(_currfl);
 			System.out.println("FileName :"+_currfl);
-		} catch (Exception e) {
-	
-			e.printStackTrace();
+		
+		}else {
+			System.out.println("not an image b:"+fl.getName());
 		}
-		System.out.println(".... Done");
 
 	}
+	
+	
 
 }
