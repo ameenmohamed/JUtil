@@ -41,12 +41,13 @@ public class ImageResizer {
 			
 			
 			File outFile = new File(_outFile);
+			outFile.getParentFile().mkdir();
 			
 		//	ImageIO.write(RenderedImage im,String formatName, File output);
 			ImageIO.write(scaledImage,"jpg", outFile);
 			long endTime = System.nanoTime();
 			long diff = endTime - startTime;
-			System.out.print("Resize of"+ srcFl.getName()+" completed in : "+TimeUnit.NANOSECONDS.toSeconds(diff) +"  Secs" );
+			System.out.println("Resize of"+ srcFl.getName()+" completed in : "+TimeUnit.NANOSECONDS.toSeconds(diff) +"  Secs" );
 			}
 			else {
 				System.out.print("Not an Image ignoring....");

@@ -1,71 +1,84 @@
 package akka.imgutil.hac.actors;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import java.util.concurrent.TimeUnit;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import akka.imgutil.hac.App;
+
 import akka.imgutil.hac.imgutil.ImageResizer;
-import akka.imgutil.hac.vo.FileSet;
+
 
 
 
 public class FileResizeActor extends AbstractActor {
 	  private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
-
-	  public static Props props() {
-		    return Props.create(FileResizeActor.class);
+//	  private final FileWorkSet workset ;
+	  
+	  private String actorName ;
+	  
+	  
+	  
+	  
+	  public static Props props(String _actorName) {
+		    return Props.create(FileResizeActor.class, () -> new FileResizeActor(_actorName));
 		  }
 	  
-	@Override
-	public void onReceive(Object message) throws Throwable {
-		if(message instanceof FileWorkSet) {
-			FileWorkSet work = (FileWorkSet) message;
-			List<String> flworkPaths = work.getFlSet().getFilePaths();
-			FileSet fSet = new FileSet();
-			for(String eachPath : flworkPaths) {
+	  
+	  
+	 public FileResizeActor(String _actorName ) {
+		 actorName= _actorName;
+	}
+	  
+
+	
+	private WorkSetResponse getToWork(FileWorkSet fileWorkSet) {
+		long startTime = System.currentTimeMillis();
+		List<String> al = new ArrayList<String>();
+		al.addAll(fileWorkSet.workMap.keySet());
+		List<String> keys = al.subList(fileWorkSet.startRange, fileWorkSet.endRange);
+		int flCount = 0;
+		for (String eachpath : keys) {
+			try {
+				ImageResizer.createResizedCopy(eachpath, 1550, fileWorkSet.workMap.get(eachpath));
+				flCount++;
+			} catch (IOException e) {
 				
-				String destFile = eachPath.replace(App.srcdir,App.destdir);
-				
-				ImageResizer.createResizedCopy(eachPath, 1550, destFile);
-				
+				e.printStackTrace();
 			}
-		
 		}
+		long timetaken = TimeUnit.MILLISECONDS.toMillis(System.currentTimeMillis() - startTime);
+		WorkSetResponse resp = new WorkSetResponse(timetaken, flCount);
 		
-		
+		return resp;
 	}
 	
 	
-	@Override
-	public Receive createReceive() {
-		  .match(FileWorkSet.class, r -> {
-              getSender().tell(new FileSet(r.requestId, lastTemperatureReading), getSelf());
-            })
-            .build();
-	}
+	
+
 
 	//--------------------------------------------------------
 	
 	public static final class FileWorkSet {
-		FileSet flSet ;
+		Map<String,String> workMap ;
 		int startRange;
 		int endRange ;
+		
 
-
-		public FileWorkSet(FileSet _flSet,int start,int end) {
-			flSet = _flSet;
+		public FileWorkSet(Map<String,String> _workMap,int start,int end) {
+			workMap = _workMap;
 			startRange = start;
 			endRange = end;
 
 		}
 
-		public FileSet getFlSet() {
-			return flSet;
-		}
 
 		public int getStartRange() {
 			return startRange;
@@ -79,12 +92,24 @@ public class FileResizeActor extends AbstractActor {
 	}
 //-----------------------------------
 	
-	public static final class FileSet {
-		public List<String> filePaths = new ArrayList<String>();
+	public static final class WorkSetResponse {
+		long timeTaken;
+		int fileCount;
 			
-		public FileSet(List<String> _filePaths) {
-			filePaths = _filePaths;
+		public WorkSetResponse(long _timeTaken,int _fileCount) {
+			timeTaken = _timeTaken;
+			fileCount= _fileCount;
 		}
+	}
+
+	@Override
+	public Receive createReceive() {
+		return receiveBuilder()
+			.match(FileWorkSet.class, _workset -> {
+					getToWork(_workset);
+				}).build();
+		
+		
 	}
 	
 	

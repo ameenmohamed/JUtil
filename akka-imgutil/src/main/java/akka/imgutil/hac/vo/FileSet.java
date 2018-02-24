@@ -12,6 +12,20 @@ public class FileSet {
 	public FileSet(List<String> _filePaths) {
 		filePaths = _filePaths;
 	}
+
+	public FileSet() {
+		
+	}
+	
+
+	public List<String> getFilePaths() {
+		return filePaths;
+	}
+
+	public void addFilePath(String _currfl) {
+		filePaths.add(_currfl);
+		
+	}
 	
 	
 	
