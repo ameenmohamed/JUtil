@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.imgutil.hac.actors.FileResizeActor;
+import akka.imgutil.hac.actors.MasterActor;
 import akka.imgutil.hac.imgutil.FileReSize;
 import akka.imgutil.hac.vo.FileSet;
 
@@ -46,7 +47,12 @@ public class App
     		
     	    int eachVal = picSize/4;
     	    
-    	    final ActorRef actorOne = system.actorOf(FileResizeActor.props("T1"),"thread1");
+    	    
+    	    final ActorRef masterActor = system.actorOf(MasterActor.props("MasterActor"),"mainActor");
+    	    masterActor.tell(new MasterActor.WorkMapVO(workMap), masterActor);
+    	    
+    	    
+    	    /*final ActorRef actorOne = system.actorOf(FileResizeActor.props("T1"),"thread1");
     	    final ActorRef actorTwo = system.actorOf(FileResizeActor.props("T2"),"thread2");
     	    final ActorRef actorThree = system.actorOf(FileResizeActor.props("T3"),"thread3");
     	    final ActorRef actorFour = system.actorOf(FileResizeActor.props("T4"),"thread4");
@@ -56,7 +62,7 @@ public class App
     	    actorTwo.tell(new FileResizeActor.FileWorkSet(workMap,55,108), ActorRef.noSender());
     	    actorThree.tell(new FileResizeActor.FileWorkSet(workMap,109,162), ActorRef.noSender());
     	    
-    	    actorFour.tell(new FileResizeActor.FileWorkSet(workMap,163,216), ActorRef.noSender());
+    	    actorFour.tell(new FileResizeActor.FileWorkSet(workMap,163,216), ActorRef.noSender());*/
    		/*int start = 0;
     		int end = eachVal;
     			
@@ -68,8 +74,9 @@ public class App
     			
     	    long endTime = System.nanoTime();
 			long diff = endTime - startTime;
-			System.out.println("******************Resize completed in : "+TimeUnit.NANOSECONDS.toSeconds(diff) +"  Secs" );	
+	//		System.out.println("******************Resize completed in : "+TimeUnit.NANOSECONDS.toSeconds(diff) +"  Secs" );	
     	    system.terminate();
+    	    System.out.println("Terminating system ......");
     		}
     	    
     	    
